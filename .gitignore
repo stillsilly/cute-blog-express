@@ -1,0 +1,13 @@
+/.idea
+/.settings
+*.iml
+/target
+/log
+/log4j
+/log4j_error
+/.project
+/.classpath
+/bin
+/out
+/node_modules
+/config
