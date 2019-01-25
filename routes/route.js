@@ -3,6 +3,9 @@ let router = express.Router()
 let User = require('./../models/user')
 let Article = require('./../models/article')
 
+let user = new User()
+let article = new Article()
+
 
 /* GET user  */
 router.get('/api/user', function (req, res, next) {
@@ -30,13 +33,13 @@ router.get('/api/user/register', function (req, res, next) {
     return res.send('password must be more than 1 letter')
   }
 
-  User.findByName(username, (result) => {
+  user.findByName(username, (result) => {
     if (result.length) {
       return res.send('存在同名账号，请换一个名字')
     }
 
     // TODO 这个东东可以不写在回调里吗……   要怎么处理……  丑死了
-    User.create({username, password}, (result) => {
+    user.create({username, password}, (result) => {
       res.send('register success')
     })
     // TODO create 这个函数需要处理注册失败的情况吗？？  或者以后统一在某个地方处理？？
@@ -55,11 +58,11 @@ router.get('/api/user/login', function (req, res, next) {
     return res.send('password cant be empty')
   }
 
-  User.findByName(username, (result) => {
+  user.findByName(username, (result) => {
     if (!result.length) {
       return res.send('no such a username')
     }
-    User.login({username, password}, (result) => {
+    user.login({username, password}, (result) => {
       if (result.length) {
         req.session.userName = username
         req.session.userId = result[0].id
@@ -90,15 +93,15 @@ router.get('/api/user/password', function (req, res, next) {
     return res.send('password must be more than 1 letter')
   }
 
-  User.findByName(username, (result) => {
+  user.findByName(username, (result) => {
     if (!result.length) {
       return res.send('no such a username')
     }
-    User.checkPassword({username, oldPassword}, (result) => {
+    user.checkPassword({username, oldPassword}, (result) => {
       if (!result.length) {
         return res.send('old password dont match username')
       }
-      User.changePassword({username, newPassword}, () => {
+      user.changePassword({username, newPassword}, () => {
         return res.send('change password success')
       })
     })
@@ -136,7 +139,7 @@ router.get('/api/article/create', function (req, res, next) {
 
   // TODO 需要判断数据库里有没有这个userid吗？？
 
-  Article.create({title, content, tagList, categoryId, userId}, () => {
+  article.create({title, content, tagList, categoryId, userId}, () => {
     res.send('create article success')
   })
 
@@ -159,7 +162,7 @@ router.get('/api/article/update', function (req, res, next) {
     return res.send('content cant be empty')
   }
 
-  Article.update({title, content, tagList, categoryId, articleId}, () => {
+  article.update({title, content, tagList, categoryId, articleId}, () => {
     res.send('update article success')
   })
 
