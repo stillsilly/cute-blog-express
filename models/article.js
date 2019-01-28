@@ -2,6 +2,11 @@ let Base = require('./base')
 
 class Article extends Base {
 
+  findById(params, cb) {
+    let sqlStr = 'SELECT user_id,is_delete FROM ety_article WHERE id = ?'
+    this.query(sqlStr, params, cb)
+  }
+
   create(params, cb) {
     let sqlStr = 'INSERT INTO ety_article (title,content,tag,category_id,create_time,user_id) VALUES (?,?,?,?,now(),?)'
     let {title, content, tagList, categoryId, userId} = params
@@ -16,6 +21,11 @@ class Article extends Base {
     let sqlStr = 'UPDATE ety_article SET title=?,content=?,tag=?,category_id=?,update_time=now() WHERE id = ?'
     let {title, content, tagList, categoryId, articleId} = params
     let sqlParams = [title, content, tagList, categoryId, articleId]
+    this.query(sqlStr, sqlParams, cb)
+  }
+
+  deleteById(sqlParams, cb) {
+    let sqlStr = 'UPDATE ety_article SET is_delete = 1,delete_time = now() WHERE id = ?'
     this.query(sqlStr, sqlParams, cb)
   }
 
