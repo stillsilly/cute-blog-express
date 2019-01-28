@@ -168,20 +168,34 @@ router.get('/api/article/update', function (req, res, next) {
 
 })
 
-router.get('/api/article/delete',function (req,res,next) {
+router.get('/api/article/delete', function (req, res, next) {
   let articleId = req.param('id')
   let userId = req.session.userId
-  article.findById(articleId,function (result) {
-    if(!result.length){
+  article.findById(articleId, function (result) {
+    if (!result.length) {
       return res.send('no such an article exist')
-    }else if(result[0].user_id !== userId){
+    } else if (result[0].user_id !== userId) {
       return res.send('Permission denied')
-    }else if(result[0].is_delete){
+    } else if (result[0].is_delete) {
       return res.send('the article has been deleted already')
     }
-    article.deleteById(articleId,function (result) {
+    article.deleteById(articleId, function (result) {
       res.send('delete success')
     })
+  })
+})
+
+router.get('/api/article/detail', function (req, res, next) {
+  let articleId = req.param('id')
+  article.getDetailById(articleId, function (result) {
+    if (!result.length) {
+      return res.send('no such an article exist')
+    } else {
+      article.updateReadCount(articleId, function () {
+
+      })
+      res.send(result[0])
+    }
   })
 })
 

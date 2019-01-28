@@ -29,6 +29,16 @@ class Article extends Base {
     this.query(sqlStr, sqlParams, cb)
   }
 
+  getDetailById(sqlParams, cb) {
+    let sqlStr = 'SELECT id,title,content,user_id,create_time,update_time,tag,read_count,is_delete FROM ety_article WHERE id = ?'
+    this.query(sqlStr, sqlParams, cb)
+  }
+
+  updateReadCount(sqlParams, cb) {
+    let sqlStr = 'UPDATE ety_article SET read_count = read_count + 1 WHERE id = ?'
+    this.query(sqlStr, sqlParams, cb)
+  }
+
 }
 
 module.exports = Article
