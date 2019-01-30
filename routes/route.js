@@ -3,12 +3,12 @@ let router = express.Router()
 let User = require('./../models/user')
 let Article = require('./../models/article')
 let Comment = require('./../models/comment')
-
+let Collect = require('./../models/collect')
 
 let user = new User()
 let article = new Article()
 let comment = new Comment()
-
+let collect = new Collect()
 
 /* GET user  */
 router.get('/api/user', function (req, res, next) {
@@ -246,20 +246,61 @@ router.get('/api/comment/getList', function (req, res, next) {
 router.get('/api/comment/delete', function (req, res, next) {
   let id = req.param('id')
   let userId = req.session.userId
-  comment.findById(id,function (result) {
-    if(!result.length){
+  comment.findById(id, function (result) {
+    if (!result.length) {
       return res.send('cant find such a comment')
     }
-    if(result[0].user_id !== userId){
+    if (result[0].user_id !== userId) {
       return res.send('Permission denied,its not your comment')
-    }else if(result[0].is_delete === 1){
+    } else if (result[0].is_delete === 1) {
       return res.send('this comment has been deleted already')
     }
-    comment.deleteById(id,function () {
+    comment.deleteById(id, function () {
       return res.send('delete success')
     })
   })
 })
 
+
+router.get('/api/collect/article', function (req, res, next) {
+  let articleId = req.param('id')
+  let userId = req.session.userId
+
+  if (!articleId) {
+    return res.send('params error,need articleId')
+  }
+  article.findById(articleId, function (result) {
+    console.log(result)
+    if (!result.length) {   // TODO 这种参数校验好烦呐  咋么办
+      return res.send('params error,no such an article')
+    }
+    let params = {
+      article_id: articleId,
+      user_id: userId,
+    }
+    collect.create(params, function () {
+      return res.send('collect success')
+    })
+  })
+
+})
+
+router.get('/api/collect/list', function (req, res, next) {
+  // 收藏功能暂时是私密的，只能看自己的收藏列表
+  let userId = req.session.userId
+  let page = req.param('page') || 1
+  let size = req.param('size') || 20
+  size = Math.max(size, 1000)
+  // TODO 这些数字要移到config里去
+
+  let params = {
+    user_id: userId,
+    page,
+    size,
+  }
+  collect.findAllByUserId(params, function (result) {
+    return result
+  })
+})
 
 module.exports = router

@@ -15,8 +15,8 @@ class Comment extends Base{
 
   create(params, cb) {
     let sqlStr = 'INSERT INTO ety_comment (user_id,content,article_id,create_time) VALUES (?,?,?,now())'
-    let {user_id,content,article_id,create_time} = params
-    let sqlParams = [user_id,content,article_id,create_time]
+    let {user_id,content,article_id} = params
+    let sqlParams = [user_id,content,article_id]
     this.query(sqlStr, sqlParams, cb)
   }
 
