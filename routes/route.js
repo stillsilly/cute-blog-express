@@ -290,7 +290,7 @@ router.get('/api/collect/list', function (req, res, next) {
   let userId = req.session.userId
   let page = req.param('page') || 1
   let size = req.param('size') || 20
-  size = Math.max(size, 1000)
+  size = Math.min(size, 1000)
   // TODO 这些数字要移到config里去
 
   let params = {
